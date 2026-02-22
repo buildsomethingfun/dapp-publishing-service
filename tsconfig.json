@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "strict": true,
+    "outDir": "dist",
+    "declaration": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "paths": {
+      "@solana-mobile/dapp-store-publishing-tools": ["../packages/core/src/index.ts"]
+    },
+    "baseUrl": "."
+  },
+  "include": ["src", "../packages/core/src/**/*.ts", "../packages/cli/src/upload/**/*.ts"],
+  "exclude": ["node_modules", "dist", "../packages/cli/src/__tests__"]
+}
