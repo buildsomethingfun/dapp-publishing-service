@@ -1,6 +1,6 @@
-# buildsomethingfun-publishing-service
+# dapp-publishing-service
 
-Express.js backend that wraps `@solana-mobile/dapp-store-publishing-tools` and exposes REST endpoints for mobile wallet adapters. It builds partially-signed Solana transactions that a mobile wallet can co-sign and submit on-chain.
+Wrapper around `@solana-mobile/dapp-store-publishing-tools` with REST endpoints for mobile wallet adapters. It builds partially-signed Solana transactions that a mobile wallet can co-sign and submit on-chain.
 
 ## How it works
 
@@ -9,10 +9,6 @@ The service sits between a mobile app and the Solana dApp Store SDK. A mobile wa
 ### Mock publisher pattern
 
 The SDK's `createApp()` and `createRelease()` expect a `Keypair` for the publisher. The backend creates a fake `Keypair` object that has the mobile user's public key but a zeroed-out secret key. This works because Metaplex's `TransactionBuilder.toTransaction()` only reads `.publicKey` to populate instruction account addresses -- it never calls sign. The backend partially signs with the mint keypair (which it generates server-side), then the mobile wallet adds the publisher's signature before submitting.
-
-### Storage cost fronting
-
-The backend's service keypair pays for Arweave uploads via Turbo. A reimbursement SOL transfer instruction can be prepended to the mint transaction so the user pays atomically when they sign and submit.
 
 ### Attestation split
 
@@ -88,23 +84,4 @@ pnpm install
 
 ```
 pnpm dev
-```
-
-## Project structure
-
-```
-src/
-  index.ts              Express app, server startup
-  config.ts             Environment config (RPC URL, service keypair, port)
-  types.ts              Zod schemas for API request validation
-  utils.ts              Shared helpers (file I/O, multer extraction, context building)
-  services/
-    metaplex.ts         Metaplex factory with remote signer identity and Turbo storage
-    transaction.ts      Transaction building, partial signing, base64 serialization
-  routes/
-    createApp.ts        POST /api/create-app
-    createRelease.ts    POST /api/create-release
-    publish.ts          POST /api/publish/prepare-attestation, POST /api/publish/submit
-  middleware/
-    upload.ts           Multer config for multipart file handling
 ```
