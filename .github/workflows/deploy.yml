@@ -1,0 +1,53 @@
+name: Deploy to Hetzner
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.HETZNER_IP }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Sync source to VPS
+        run: |
+          rsync -avz --delete \
+            --exclude node_modules \
+            --exclude .git \
+            --exclude dist \
+            --exclude webview-template/node_modules \
+            --exclude webview-template/.gradle \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            ./ "root@${{ secrets.HETZNER_IP }}:/opt/bsf-publish/src/"
+
+      - name: Build and restart container
+        run: |
+          ssh -i ~/.ssh/deploy_key "root@${{ secrets.HETZNER_IP }}" bash -s <<'EOF'
+          set -euo pipefail
+          cd /opt/bsf-publish/src
+          docker build -t bsf-publish -f Containerfile.slim .
+          docker stop bsf-publish 2>/dev/null || true
+          docker rm bsf-publish 2>/dev/null || true
+          docker run -d \
+            --name bsf-publish \
+            --restart unless-stopped \
+            -p 127.0.0.1:3000:3000 \
+            --env-file /opt/bsf-publish/.env \
+            -v /opt/bsf-publish/service-keypair.json:/app/service-keypair.json:ro \
+            bsf-publish
+          sleep 3
+          curl -sf http://localhost:3000/health || (docker logs bsf-publish && exit 1)
+          echo "Deploy successful"
+          EOF
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
