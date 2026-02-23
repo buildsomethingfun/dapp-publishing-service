@@ -18,7 +18,7 @@ import {
   TICKET_PROPERTY_ALPHA_TEST,
   TICKET_PROPERTY_ALPHA_TESTERS,
   URL_FORM_SUBMIT,
-} from "../../../packages/core/src/publish/dapp_publisher_portal.js";
+} from "../services/dapp-publisher-portal.js";
 import { config } from "../config.js";
 import {
   PrepareAttestationRequestSchema,

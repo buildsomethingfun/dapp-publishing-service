@@ -1,0 +1,120 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@capacitor/android':
+        specifier: ^7.0.0
+        version: 7.5.0(@capacitor/core@7.5.0)
+      '@capacitor/camera':
+        specifier: ^7.0.0
+        version: 7.0.4(@capacitor/core@7.5.0)
+      '@capacitor/core':
+        specifier: ^7.0.0
+        version: 7.5.0
+      '@capacitor/device':
+        specifier: ^7.0.0
+        version: 7.0.4(@capacitor/core@7.5.0)
+      '@capacitor/filesystem':
+        specifier: ^7.0.0
+        version: 7.1.8(@capacitor/core@7.5.0)
+      '@capacitor/geolocation':
+        specifier: ^7.0.0
+        version: 7.1.8(@capacitor/core@7.5.0)
+      '@capacitor/haptics':
+        specifier: ^7.0.0
+        version: 7.0.3(@capacitor/core@7.5.0)
+      '@capacitor/share':
+        specifier: ^7.0.0
+        version: 7.0.4(@capacitor/core@7.5.0)
+
+packages:
+
+  '@capacitor/android@7.5.0':
+    resolution: {integrity: sha512-VjESuJYzQQH4vxvrOQV0yXuDv3Gx1bfb6YpAkoGfUHe0kiw0LY5nh5Kn7I5bI9hlht9SJ8YmSsCgFeMNyzKoWQ==}
+    peerDependencies:
+      '@capacitor/core': ^7.5.0
+
+  '@capacitor/camera@7.0.4':
+    resolution: {integrity: sha512-vKTq7J6/41NToZO5xWsXuaaI23HbWKBwvRJNtH+1Ij0nm0eBWkxQ3hf/NY2cX5d14qWoS/y7WzUhtFaf+BiEYg==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
+  '@capacitor/core@7.5.0':
+    resolution: {integrity: sha512-4Y4trISe2Bp3lwsoGFoQIvgX4hiZO8S1Slmbz6oFaMxAuEc4noipQGCQx974PF4glwVVe/8+H3P9iEmCXtrUgA==}
+
+  '@capacitor/device@7.0.4':
+    resolution: {integrity: sha512-hbdKIcXO5f6HB/TD1uf6XHtkbg4C5AlMIA0xIgN9CaK561009OT9i3A62eHreRzOB5Ea7qi0VPHMB7HdFD4BTQ==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
+  '@capacitor/filesystem@7.1.8':
+    resolution: {integrity: sha512-Qpw/2SE4/CzqAUvGgSM9hw/uXQ5qoOaF4wxbToXwpAaKPS+tzletS1h5ti3jjLmGcqizTs2sEXMtcsARW/Ceew==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
+  '@capacitor/geolocation@7.1.8':
+    resolution: {integrity: sha512-x/rJieD2N2zlGvXFRD3ru4ArJWTwXAIYmyhfo5zg4F1DKGos7mCCOvIOSVMdfQmt14SCsmJeO9Qe8EtDGNGCrw==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
+  '@capacitor/haptics@7.0.3':
+    resolution: {integrity: sha512-6O5W4jtYKPGrulqt3pEeXKH1vWT5deSUoiiN2sVj7F6UgrEOxCmm06XS07Eeum0lDXEmksKARwtA+iQwHPswtA==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
+  '@capacitor/share@7.0.4':
+    resolution: {integrity: sha512-wNXxmXUcChrtbZ5jQv8scFIbIGKo3rk6B7qpWySxfUhYJP5NANgAqQ9Z69m0k/zYsucdh66SBU7XW1ykd9aUug==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
+  '@capacitor/synapse@1.0.4':
+    resolution: {integrity: sha512-/C1FUo8/OkKuAT4nCIu/34ny9siNHr9qtFezu4kxm6GY1wNFxrCFWjfYx5C1tUhVGz3fxBABegupkpjXvjCHrw==}
+
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
+snapshots:
+
+  '@capacitor/android@7.5.0(@capacitor/core@7.5.0)':
+    dependencies:
+      '@capacitor/core': 7.5.0
+
+  '@capacitor/camera@7.0.4(@capacitor/core@7.5.0)':
+    dependencies:
+      '@capacitor/core': 7.5.0
+
+  '@capacitor/core@7.5.0':
+    dependencies:
+      tslib: 2.8.1
+
+  '@capacitor/device@7.0.4(@capacitor/core@7.5.0)':
+    dependencies:
+      '@capacitor/core': 7.5.0
+
+  '@capacitor/filesystem@7.1.8(@capacitor/core@7.5.0)':
+    dependencies:
+      '@capacitor/core': 7.5.0
+      '@capacitor/synapse': 1.0.4
+
+  '@capacitor/geolocation@7.1.8(@capacitor/core@7.5.0)':
+    dependencies:
+      '@capacitor/core': 7.5.0
+      '@capacitor/synapse': 1.0.4
+
+  '@capacitor/haptics@7.0.3(@capacitor/core@7.5.0)':
+    dependencies:
+      '@capacitor/core': 7.5.0
+
+  '@capacitor/share@7.0.4(@capacitor/core@7.5.0)':
+    dependencies:
+      '@capacitor/core': 7.5.0
+
+  '@capacitor/synapse@1.0.4': {}
+
+  tslib@2.8.1: {}

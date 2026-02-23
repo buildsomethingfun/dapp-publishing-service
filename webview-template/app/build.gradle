@@ -1,0 +1,41 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace "fun.buildsomething.webview"
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "__BSF_APPLICATION_ID__"
+        minSdk 24
+        targetSdk 36
+        versionCode __BSF_VERSION_CODE__
+        versionName "__BSF_VERSION_NAME__"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+repositories {
+    flatDir {
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'src/main/libs'
+    }
+}
+
+dependencies {
+    implementation project(':capacitor-android')
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
+    implementation 'androidx.core:core-splashscreen:1.0.1'
+}
+
+apply from: 'capacitor.build.gradle'

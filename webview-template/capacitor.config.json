@@ -1,0 +1,12 @@
+{
+  "appId": "__BSF_APPLICATION_ID__",
+  "appName": "__BSF_APP_NAME__",
+  "webDir": "www",
+  "server": {
+    "url": "__BSF_APP_URL__",
+    "cleartext": false
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}

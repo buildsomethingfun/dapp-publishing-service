@@ -1,0 +1,3 @@
+publish.buildsomething.fun {
+	reverse_proxy localhost:3000
+}

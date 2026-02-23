@@ -1,0 +1,27 @@
+# Slim build: Node.js only (no Android SDK / JDK)
+# Use this on VPS with <2GB RAM. APK builds will fail but all other endpoints work.
+# For full APK build support, use the main Containerfile on a 4GB+ VPS.
+
+FROM node:20-slim AS builder
+
+RUN corepack enable && corepack prepare pnpm@10.27.0 --activate
+
+WORKDIR /build
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+COPY tsconfig.json ./
+COPY src/ ./src/
+RUN pnpm build
+
+FROM node:20-slim
+
+WORKDIR /app
+
+COPY --from=builder /build/dist/ ./dist/
+COPY --from=builder /build/node_modules/ ./node_modules/
+COPY package.json ./
+
+EXPOSE 3000
+
+CMD ["node", "dist/index.js"]

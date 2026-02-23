@@ -1,7 +1,7 @@
-import { Metaplex, keypairIdentity, lamports } from "@metaplex-foundation/js";
+import { Metaplex, keypairIdentity } from "@metaplex-foundation/js";
 import type { Amount, MetaplexFile } from "@metaplex-foundation/js";
 import { PublicKey, Keypair, Connection } from "@solana/web3.js";
-import { TurboStorageDriver } from "../../../packages/cli/src/upload/TurboStorageDriver.js";
+import { TurboUploader } from "./turbo-upload.js";
 import { config } from "../config.js";
 import debugModule from "debug";
 
@@ -26,7 +26,7 @@ export function createMetaplexInstance(
     keypairIdentity(publisherSigner)
   );
 
-  const turboDriver = new TurboStorageDriver(
+  const uploader = new TurboUploader(
     config.serviceKeypair,
     config.isDevnet ? "devnet" : "mainnet",
     config.turboBufferPercentage
@@ -34,11 +34,10 @@ export function createMetaplexInstance(
 
   const metaplexAdapter = {
     async upload(file: MetaplexFile): Promise<string> {
-      return turboDriver.upload(file);
+      return uploader.upload(file);
     },
     async getUploadPrice(bytes: number): Promise<Amount> {
-      const price = await turboDriver.getUploadPrice(bytes);
-      return lamports(price);
+      return uploader.getUploadPrice(bytes);
     },
   };
 

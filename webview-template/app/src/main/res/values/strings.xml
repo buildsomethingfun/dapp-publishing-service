@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">__BSF_APP_NAME__</string>
+    <string name="title_activity_main">__BSF_APP_NAME__</string>
+    <string name="package_name">__BSF_APPLICATION_ID__</string>
+    <string name="custom_url_scheme">__BSF_APPLICATION_ID__</string>
+</resources>
