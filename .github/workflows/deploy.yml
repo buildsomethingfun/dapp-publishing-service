@@ -30,7 +30,7 @@ jobs:
 
       - name: Build and restart container
         run: |
-          ssh -i ~/.ssh/deploy_key "root@${{ secrets.HETZNER_IP }}" bash -s <<'EOF'
+          ssh -i ~/.ssh/deploy_key "root@${{ secrets.HETZNER_IP }}" 'bash -s' <<'DEPLOY_EOF'
           set -euo pipefail
           cd /opt/bsf-publish/src
           docker build -t bsf-publish -f Containerfile.slim .
@@ -43,10 +43,18 @@ jobs:
             --env-file /opt/bsf-publish/.env \
             -v /opt/bsf-publish/service-keypair.json:/app/service-keypair.json:ro \
             bsf-publish
-          sleep 3
-          curl -sf http://localhost:3000/health || (docker logs bsf-publish && exit 1)
-          echo "Deploy successful"
-          EOF
+          for i in 1 2 3 4 5; do
+            sleep 2
+            if curl -sf http://localhost:3000/health > /dev/null 2>&1; then
+              echo "Health check passed (attempt $i)"
+              exit 0
+            fi
+            echo "Health check attempt $i failed, retrying..."
+          done
+          echo "Health check failed after 5 attempts"
+          docker logs bsf-publish
+          exit 1
+          DEPLOY_EOF
 
       - name: Cleanup SSH key
         if: always()
