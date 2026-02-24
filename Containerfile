@@ -12,7 +12,7 @@ COPY src/ ./src/
 RUN pnpm build
 
 # Stage 2: Runtime with Android SDK + JDK
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:21-jdk
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ANDROID_HOME=/opt/android-sdk

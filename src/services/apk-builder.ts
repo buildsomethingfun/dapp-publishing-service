@@ -188,12 +188,8 @@ async function runBuild(buildId: string, params: BuildParams): Promise<void> {
       await downloadIcon(params.iconUrl, iconDest);
     }
 
-    // Run cap sync if node_modules/@capacitor exists
-    const capDir = path.join(tmpDir, "node_modules", "@capacitor");
-    if (fs.existsSync(capDir)) {
-      debug("Build %s: running cap sync", buildId);
-      execSync("npx cap sync android", { cwd: tmpDir, stdio: "pipe", timeout: 120_000 });
-    }
+    // Skip cap sync — the template already has Capacitor native code pre-configured.
+    // The capacitor.config.json is manually copied to assets above.
 
     // Run Gradle build with timeout
     debug("Build %s: starting Gradle build", buildId);
