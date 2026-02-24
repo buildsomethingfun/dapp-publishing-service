@@ -46,7 +46,7 @@ export class TurboUploader {
       },
     });
 
-    const uri = `https://arweave.net/${result.id}`;
+    const uri = `https://arweave.net/raw/${result.id}`;
     debug("Uploaded to %s", uri);
     return uri;
   }
