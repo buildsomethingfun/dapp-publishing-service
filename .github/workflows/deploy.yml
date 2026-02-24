@@ -39,9 +39,12 @@ jobs:
           docker run -d \
             --name bsf-publish \
             --restart unless-stopped \
+            --memory=6g \
             -p 127.0.0.1:3000:3000 \
             --env-file /opt/bsf-publish/.env \
             -v /opt/bsf-publish/service-keypair.json:/app/service-keypair.json:ro \
+            -v /opt/bsf-publish/gradle-cache:/root/.gradle \
+            -e DEBUG="service:*" \
             bsf-publish
           for i in 1 2 3 4 5; do
             sleep 2
