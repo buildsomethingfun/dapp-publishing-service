@@ -33,7 +33,7 @@ jobs:
           ssh -i ~/.ssh/deploy_key "root@${{ secrets.HETZNER_IP }}" 'bash -s' <<'DEPLOY_EOF'
           set -euo pipefail
           cd /opt/bsf-publish/src
-          docker build -t bsf-publish -f Containerfile.slim .
+          docker build -t bsf-publish -f Containerfile .
           docker stop bsf-publish 2>/dev/null || true
           docker rm bsf-publish 2>/dev/null || true
           docker run -d \

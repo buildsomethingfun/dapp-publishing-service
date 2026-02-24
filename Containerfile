@@ -53,14 +53,22 @@ COPY --from=builder /build/dist/ ./dist/
 COPY --from=builder /build/node_modules/ ./node_modules/
 COPY package.json ./
 
-# Copy WebView template (with node_modules for Capacitor)
-COPY webview-template/ ./webview-template/
+# Copy WebView template (without node_modules — installed below)
+COPY webview-template/app/ ./webview-template/app/
+COPY webview-template/gradle/ ./webview-template/gradle/
+COPY webview-template/www/ ./webview-template/www/
+COPY webview-template/build.gradle.kts ./webview-template/
+COPY webview-template/settings.gradle.kts ./webview-template/
+COPY webview-template/gradle.properties ./webview-template/
+COPY webview-template/gradlew ./webview-template/
+COPY webview-template/capacitor.config.json ./webview-template/
+COPY webview-template/package.json webview-template/pnpm-lock.yaml ./webview-template/
 
-# Pre-warm Gradle cache: run gradlew --version to download the distribution
-RUN cd webview-template && ./gradlew --version --no-daemon || true
+# Install Capacitor dependencies
+RUN cd webview-template && pnpm install --frozen-lockfile
 
-# Pre-warm Capacitor sync to cache native deps
-RUN cd webview-template && npx cap sync android 2>/dev/null || true
+# Pre-warm Gradle cache: download the distribution
+RUN cd webview-template && chmod +x gradlew && ./gradlew --version --no-daemon || true
 
 EXPOSE 3000
 
