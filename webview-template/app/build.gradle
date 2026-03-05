@@ -12,10 +12,20 @@ android {
         versionName "__BSF_VERSION_NAME__"
     }
 
+    signingConfigs {
+        release {
+            storeFile file("__BSF_KEYSTORE_PATH__")
+            storePassword "__BSF_KEYSTORE_PASSWORD__"
+            keyAlias "__BSF_KEY_ALIAS__"
+            keyPassword "__BSF_KEY_PASSWORD__"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 

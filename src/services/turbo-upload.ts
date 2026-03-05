@@ -3,6 +3,7 @@ import type { Keypair } from "@solana/web3.js";
 import bs58 from "bs58";
 import type { MetaplexFile, Amount } from "@metaplex-foundation/js";
 import { lamports } from "@metaplex-foundation/js";
+import { Readable } from "stream";
 import debugModule from "debug";
 
 const debug = debugModule("service:turbo-upload");
@@ -37,7 +38,7 @@ export class TurboUploader {
     debug("Uploading %d bytes to Arweave", buffer.byteLength);
 
     const result = await turbo.uploadFile({
-      fileStreamFactory: () => buffer as unknown as ReadableStream,
+      fileStreamFactory: () => Readable.from(buffer),
       fileSizeFactory: () => buffer.byteLength,
       dataItemOpts: {
         tags: [

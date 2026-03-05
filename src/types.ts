@@ -120,3 +120,12 @@ export interface PrepareAttestationResponse {
   attestationBuffer: string;
   requestUniqueId: string;
 }
+
+export const CreatePublisherRequestSchema = z.object({
+  publisherAddress: base58String,
+  publisherName: z.string().min(1).max(32),
+  publisherWebsite: z.string().url().refine((v) => v.startsWith("https://"), { message: "Must be HTTPS" }),
+  publisherEmail: z.string().email(),
+});
+
+export type CreatePublisherRequest = z.infer<typeof CreatePublisherRequestSchema>;

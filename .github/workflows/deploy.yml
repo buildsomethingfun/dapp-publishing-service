@@ -44,6 +44,7 @@ jobs:
             --env-file /opt/bsf-publish/.env \
             -v /opt/bsf-publish/service-keypair.json:/app/service-keypair.json:ro \
             -v /opt/bsf-publish/gradle-cache:/root/.gradle \
+            -v /opt/bsf-publish/keystores:/app/keystores \
             -e DEBUG="service:*" \
             bsf-publish
           for i in 1 2 3 4 5; do

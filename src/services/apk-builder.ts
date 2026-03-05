@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { randomUUID, randomBytes } from "crypto";
 import fs from "fs";
 import path from "path";
 import os from "os";
@@ -99,6 +99,56 @@ function substituteTokens(filePath: string, replacements: Record<string, string>
   fs.writeFileSync(filePath, content, "utf-8");
 }
 
+// --- Keystore ---
+
+type KeystoreInfo = {
+  path: string;
+  password: string;
+  alias: string;
+  keyPassword: string;
+};
+
+function getOrCreateKeystore(packageName: string): KeystoreInfo {
+  fs.mkdirSync(config.keystoreDir, { recursive: true });
+
+  const keystorePath = path.join(config.keystoreDir, `${packageName}.jks`);
+  const metaPath = path.join(config.keystoreDir, `${packageName}.json`);
+
+  // Return existing keystore
+  if (fs.existsSync(keystorePath) && fs.existsSync(metaPath)) {
+    const meta = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
+    debug("Using existing keystore for %s", packageName);
+    return {
+      path: keystorePath,
+      password: meta.password,
+      alias: meta.alias,
+      keyPassword: meta.keyPassword,
+    };
+  }
+
+  // Generate new keystore
+  // PKCS12 (JDK 21 default) requires key password == store password
+  const password = randomBytes(24).toString("hex");
+  const alias = packageName.replace(/\./g, "_");
+
+  debug("Generating new keystore for %s at %s", packageName, keystorePath);
+
+  execSync(
+    `keytool -genkeypair -v -keystore "${keystorePath}" -keyalg RSA -keysize 2048 -validity 10000 -alias "${alias}" -storepass "${password}" -keypass "${password}" -dname "CN=BSF App, OU=BSF, O=buildsomething.fun, L=Internet, ST=Web, C=US"`,
+    { stdio: "pipe" }
+  );
+
+  // Save metadata alongside keystore
+  fs.writeFileSync(
+    metaPath,
+    JSON.stringify({ password, alias, keyPassword: password, createdAt: new Date().toISOString() }),
+    "utf-8"
+  );
+
+  debug("Keystore created for %s", packageName);
+  return { path: keystorePath, password, alias, keyPassword: password };
+}
+
 // --- Core ---
 
 export function queueBuild(params: BuildParams): string {
@@ -144,6 +194,9 @@ async function runBuild(buildId: string, params: BuildParams): Promise<void> {
     // Copy template
     execSync(`cp -r "${config.androidTemplatePath}/." "${tmpDir}/"`, { stdio: "pipe" });
 
+    // Generate or load per-app keystore
+    const keystore = getOrCreateKeystore(params.packageName);
+
     // Substitute tokens
     const xmlEscapedName = escapeXml(params.appName);
 
@@ -153,6 +206,10 @@ async function runBuild(buildId: string, params: BuildParams): Promise<void> {
       __BSF_APP_URL__: params.deployedUrl,
       __BSF_VERSION_NAME__: params.version,
       __BSF_VERSION_CODE__: String(params.versionCode),
+      __BSF_KEYSTORE_PATH__: keystore.path,
+      __BSF_KEYSTORE_PASSWORD__: keystore.password,
+      __BSF_KEY_ALIAS__: keystore.alias,
+      __BSF_KEY_PASSWORD__: keystore.keyPassword,
     };
 
     // Substitute in build.gradle (or build.gradle.kts)
@@ -209,27 +266,16 @@ async function runBuild(buildId: string, params: BuildParams): Promise<void> {
           if (err) {
             reject(new Error(`Gradle build failed: ${stderr.slice(-2000)}`));
           } else {
-            const apk = path.join(
-              tmpDir,
-              "app",
-              "build",
-              "outputs",
-              "apk",
-              "release",
-              "app-release-unsigned.apk"
-            );
-            if (fs.existsSync(apk)) {
-              resolve(apk);
+            const releaseDir = path.join(tmpDir, "app", "build", "outputs", "apk", "release");
+            // Signed APK first, then unsigned as fallback
+            const signedApk = path.join(releaseDir, "app-release.apk");
+            const unsignedApk = path.join(releaseDir, "app-release-unsigned.apk");
+            if (fs.existsSync(signedApk)) {
+              resolve(signedApk);
+            } else if (fs.existsSync(unsignedApk)) {
+              resolve(unsignedApk);
             } else {
-              // Try debug APK as fallback
-              const debugApk = path.join(
-                tmpDir, "app", "build", "outputs", "apk", "release", "app-release.apk"
-              );
-              if (fs.existsSync(debugApk)) {
-                resolve(debugApk);
-              } else {
-                reject(new Error("APK not found after build"));
-              }
+              reject(new Error("APK not found after build"));
             }
           }
         }

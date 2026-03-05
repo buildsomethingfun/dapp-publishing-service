@@ -9,8 +9,8 @@ const debug = debugModule("service:build-apk");
 
 const BuildApkRequestSchema = z.object({
   deployedUrl: z.string().url().refine(
-    (url) => /^https:\/\/.*\.workers\.dev/.test(url),
-    "Must be a *.workers.dev HTTPS URL"
+    (url) => url.startsWith("https://"),
+    "Must be an HTTPS URL"
   ),
   appName: z.string().min(1).max(100),
   packageName: z.string().regex(
